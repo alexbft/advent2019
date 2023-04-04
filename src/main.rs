@@ -1,7 +1,7 @@
-use crate::day1part2::day1part2;
+use crate::day2part2::day2part2;
 
-mod day1part2;
+mod day2part2;
 
 fn main() {
-    day1part2("day1.txt".to_string());
+    day2part2("day2.txt".to_string());
 }
