@@ -11,11 +11,16 @@ export function openInputFile() {
   return open(fullName);
 }
 
-export async function readAllLines() {
+export async function readAllText() {
   const fInput = await openInputFile();
   try {
-    return (await fInput.readFile('utf8')).trimEnd().split(/\r?\n/);
+    return (await fInput.readFile('utf-8')).trimEnd();
   } finally {
     await fInput.close();
   }
+}
+
+export async function readAllLines() {
+  const text = await readAllText();
+  return text.split(/\r?\n/);
 }
