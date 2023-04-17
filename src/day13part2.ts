@@ -1,10 +1,5 @@
-import { HashDict } from 'scl';
-import { HashDictOptions } from 'scl/lib/HashDict';
-import { ResolveAction } from 'scl/lib/util';
 import { Computer } from './day11/intcode';
 import { readAllText } from './lib/ts-bootstrap';
-
-type Point = [number, number];
 
 const blocks = new Map<number, string>([[0, '.'], [1, '#'], [2, '$'], [3, '-'], [4, '*']]);
 
@@ -12,21 +7,14 @@ const maxX = 43;
 const maxY = 22;
 
 interface GameState {
-    grid: HashDict<Point, number>;
+    display: string[][];
     score: number;
     ballPosX: number;
     paddlePosX: number;
 }
 
 function getInput(state: GameState): number {
-    const display: string[][] = [];
-    for (let y = 0; y < maxY; ++y) {
-        display.push(Array(maxX).fill(' '));
-    }
-    for (const [[x, y], v] of state.grid) {
-        display[y][x] = blocks.get(v) ?? `${v}`;
-    }
-    console.log(display.map(row => row.join('')).join('\n'));
+    console.log(state.display.map(row => row.join('')).join('\n'));
     console.log(state.score);
     return Math.sign(state.ballPosX - state.paddlePosX);
 }
@@ -36,9 +24,12 @@ async function main() {
     const program = programRaw.split(',').map(Number);
     const instance = new Computer(program).getInstance();
     instance.writeMemory(0, 2);
-    const dictOptions: HashDictOptions<Point, number> = { onDuplicateKeys: ResolveAction.Replace };
+    const display: string[][] = [];
+    for (let y = 0; y < maxY; ++y) {
+        display.push(Array(maxX).fill(' '));
+    }
     const state: GameState = {
-        grid: new HashDict<Point, number>(dictOptions),
+        display,
         score: 0,
         ballPosX: 0,
         paddlePosX: 0,
@@ -58,7 +49,7 @@ async function main() {
             if (x === -1 && y === 0) {
                 state.score = value;
             } else {
-                state.grid.add([[x, y], value]);
+                state.display[y][x] = blocks.get(value)!;
                 if (value === 3) {
                     state.paddlePosX = x;
                 } else if (value === 4) {
