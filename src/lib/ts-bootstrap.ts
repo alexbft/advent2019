@@ -1,12 +1,17 @@
 import { open } from 'node:fs/promises';
 import path from 'path';
 
-export function openInputFile() {
+export function getInputFileName() {
     let fName = process.argv[2];
     if (fName == null) {
         fName = path.basename(process.argv[1], '.ts');
         fName = fName.replace(/part(1|2)/, '') + '.txt';
     }
+    return fName;
+}
+
+export function openInputFile() {
+    const fName = getInputFileName();
     const fullName = path.resolve(path.dirname(process.argv[1]), '../resources', fName);
     return open(fullName);
 }
